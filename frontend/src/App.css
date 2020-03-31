@@ -1,0 +1,123 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.Prospect-details {
+  border: none;
+}
+
+.Prospect-label {
+  position:absolute;
+  padding: 1%;
+  text-align: center;
+  border:1px solid black;
+  margin-left: 2%;
+  background-color:white;
+  
+}
+
+.Lead-dashboard-list {
+  text-align: left;
+  border:1px solid #000000;
+  overflow-wrap: break-word;
+  
+}
+
+.Full-screen {
+  text-emphasis: none;
+}
+
+.List-container {
+  place-self: center;
+  border:1px solid #000000;
+  height: inherit;
+  padding: 1%;
+}
+
+
+.Custom-heading {
+  font-size: 6vh;
+  color: #272729;
+}
+
+.Dashboard {
+  height: 100%;
+  width: 100%;
+}
+
+.Sidebar {
+  width: 10;
+  height: 100%;
+  border:1px solid #000000;
+  background-color: rgb(205, 207, 207);
+  
+}
+.Radio-label{
+  width: 90%;
+  
+}
+
+.Description {
+  width: 100%;
+  height: 40%;
+  /* border:1px solid #000000; */
+  word-wrap: break-word;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+
+#border{
+
+  border-style: groove;
+  border-color:black;
+}
+#margin {
+  border: 1px solid black; 
+  padding: 50px 50px 50px 50px;
+}
+#margin1 {
+  border: 1px solid black; 
+  padding: 8px;
+}
+.top
+{
+  margin-top: 10px;
+
+}

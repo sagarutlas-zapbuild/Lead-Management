@@ -1,0 +1,8 @@
+node_modules
+env
+*.pyc
+.vscode/settings.json
+db.sqlite3
+migrations
+testdata.json
+uploads
