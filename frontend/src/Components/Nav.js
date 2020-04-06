@@ -3,34 +3,37 @@ import PropTypes from 'prop-types';
 import {
   Link, Redirect
 } from "react-router-dom";
-import Sidebar from "react-sidebar"
+
 
 
 
 
 function Nav(props) {
+
   if (props.logged_in === false)
     return (
-      <ul>
-        <li>
-          <Link to="/login">login</Link>
-        </li>
-      </ul>
+      <div></div>
     );
 
-  else return (
-    <ul>
-      <li onClick={props.handle_logout}>
-        <Link to="/login">Logout</Link>
-      </li>
-      <li>
-        <Link to="/">Dashboard</Link>
-      </li>
-      <li>
-        <Link to="/new_lead">New Lead</Link>
-      </li>
-    </ul>
-  );
+  if (props.logged_in === true) {
+    return (
+      <div>
+        <h4>Hello, {localStorage.getItem("user_name")}</h4>
+        <ul>
+          <li onClick={props.handle_logout}>
+            <Link to="/login">Logout</Link>
+          </li>
+          <li>
+            <Link to="/">Dashboard</Link>
+          </li>
+          <li>
+            <Link to="/new_lead">New Lead</Link>
+          </li>
+        </ul>
+
+      </div>
+    );
+  }
 }
 
 export default Nav;

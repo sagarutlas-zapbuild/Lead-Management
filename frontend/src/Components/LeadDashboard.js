@@ -34,81 +34,80 @@ class Dashboard extends React.Component {
     Lead_filter = (status) => {
         return this.state.leads.filter(lead => { return lead.lead_status === status })
     }
-    
+
 
     render() {
-        try{
-        return (
-            <Container fluid={true} className="Full-screen">
-                <Row className="Dashboard">
-                    <Col className="Sidebar" sm="1">
-                        For Sidebar
-                </Col>
-                    <Col sm="11">
-                        <Container className="List-container">
+        try {
+            return (
+                <Container fluid={true} className="Full-screen">
+                    <Row className="Dashboard">
 
-                            <h2>Lead Dashboard </h2>
-                            <Row>
-                                <Col sm="3">
-                                    <ListGroup className="Lead-dashboard-list">
-                                        <ListGroupItem color="info">
+                        <Col sm="11">
+                            <Container className="List-container">
 
-                                            <ListGroupItemHeading >
-                                                New
+                                <h2>Lead Dashboard </h2>
+                                <Row>
+                                    <Col sm="3">
+                                        <ListGroup className="Lead-dashboard-list">
+                                            <ListGroupItem color="info">
+
+                                                <ListGroupItemHeading >
+                                                    New
                                             </ListGroupItemHeading>
-                                        </ListGroupItem>
+                                            </ListGroupItem>
 
-                                        {this.Lead_filter("New").map(lead => { return <ListGroupItem action><ModalConductor status='New' lead_title={lead.lead_title} lead_id={lead.lead_id} /></ListGroupItem> })}
+                                            {this.Lead_filter("New").map(lead => { return <ListGroupItem action><ModalConductor status='New' lead_title={lead.lead_title} lead_id={lead.lead_id} /></ListGroupItem> })}
 
 
-                                    </ListGroup>
-                                </Col>
+                                        </ListGroup>
+                                    </Col>
 
-                                <Col sm="3">
-                                    <ListGroup className="Lead-dashboard-list">
-                                        <ListGroupItem color="info">
-                                            <ListGroupItemHeading >
-                                                Accepted
+                                    <Col sm="3">
+                                        <ListGroup className="Lead-dashboard-list">
+                                            <ListGroupItem color="info">
+                                                <ListGroupItemHeading >
+                                                    Accepted
                                             </ListGroupItemHeading>
-                                        </ListGroupItem>
+                                            </ListGroupItem>
 
-                                        {this.Lead_filter("Accepted").map(lead => { return <ListGroupItem action><ModalConductor status='Accepted' lead_title={lead.lead_title} lead_id={lead.lead_id} /></ListGroupItem> })}
-                                    </ListGroup>
-                                </Col>
-                                <Col sm="3">
+                                            {this.Lead_filter("Accepted").map(lead => { return <ListGroupItem action><ModalConductor status='Accepted' lead_title={lead.lead_title} lead_id={lead.lead_id} /></ListGroupItem> })}
+                                        </ListGroup>
+                                    </Col>
+                                    <Col sm="3">
 
 
 
-                                    <ListGroup className="Lead-dashboard-list">
-                                        <ListGroupItem color="info">
+                                        <ListGroup className="Lead-dashboard-list">
+                                            <ListGroupItem color="info">
 
-                                            <ListGroupItemHeading >
-                                                Pitched
+                                                <ListGroupItemHeading >
+                                                    Pitched
                             </ListGroupItemHeading>   </ListGroupItem>
 
-                                        {this.Lead_filter("Pitched").map(lead => { return <ListGroupItem action><ModalConductor status='Pitched' lead_title={lead.lead_title} lead_id={lead.lead_id} /></ListGroupItem> })}
-                                    </ListGroup>
-                                </Col>
-                                <Col sm="3">
-                                    <ListGroup className="Lead-dashboard-list">
-                                        <ListGroupItem color="info">
+                                            {this.Lead_filter("Pitched").map(lead => { return <ListGroupItem action><ModalConductor status='Pitched' lead_title={lead.lead_title} lead_id={lead.lead_id} /></ListGroupItem> })}
+                                        </ListGroup>
+                                    </Col>
+                                    <Col sm="3">
+                                        <ListGroup className="Lead-dashboard-list">
+                                            <ListGroupItem color="info">
 
-                                            <ListGroupItemHeading >
-                                                Response Generated
+                                                <ListGroupItemHeading >
+                                                    Response Generated
                             </ListGroupItemHeading>   </ListGroupItem>
-                                        {this.Lead_filter("ResponseGenerated").map(lead => { return <ListGroupItem action><ModalConductor status='ResponseGenerated' lead_title={lead.lead_title} lead_id={lead.lead_id} /></ListGroupItem> })}
-                                    </ListGroup>
-                                </Col>
-                            </Row>
-                        </Container>
-                    </Col>
-                </Row>
+                                            {this.Lead_filter("ResponseGenerated").map(lead => { return <ListGroupItem action><ModalConductor status='ResponseGenerated' lead_title={lead.lead_title} lead_id={lead.lead_id} /></ListGroupItem> })}
+                                        </ListGroup>
+                                    </Col>
+                                </Row>
+                            </Container>
+                        </Col>
+                    </Row>
 
 
-            </Container >
-        )}
+                </Container >
+            )
+        }
         catch (error) {
-            return<Redirect to = 'login'/>
+            return <Redirect to='login' />
         }
     }
 }

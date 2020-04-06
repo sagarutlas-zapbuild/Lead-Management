@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import { Container, Row, Col, Label } from 'reactstrap'
 
 class Leadform extends React.Component {
-  
+
   constructor(props) {
     super(props);
     this.initialState =

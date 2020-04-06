@@ -78,9 +78,11 @@ import {
   Link,
   Redirect,
 } from "react-router-dom";
+import Sidebar from 'react-sidebar';
+import { Button } from 'reactstrap';
+import { GiHamburgerMenu } from "react-icons/gi"
 
-
-
+const mql = window.matchMedia(`(min-width: 800px)`);
 
 class App extends Component {
   constructor(props) {
@@ -88,13 +90,29 @@ class App extends Component {
     this.state = {
       displayed_form: '',
       logged_in: localStorage.getItem('token') ? true : false,
+      sidebarDocked: mql.matches,
+      sidebarOpen: false
     };
     this.handle_logout = this.handle_logout.bind(this);
-   
+    this.mediaQueryChanged = this.mediaQueryChanged.bind(this);
+    this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
+
   }
-  
-  componentDidMount() {
-  
+
+  componentWillMount() {
+    mql.addListener(this.mediaQueryChanged);
+  }
+
+  componentWillUnmount() {
+    this.state.mql.removeListener(this.mediaQueryChanged);
+  }
+
+  onSetSidebarOpen(open) {
+    this.setState({ sidebarOpen: open });
+  }
+
+  mediaQueryChanged() {
+    this.setState({ sidebarDocked: mql.matches, sidebarOpen: false });
   }
 
   handle_login = (e, data) => {
@@ -116,7 +134,7 @@ class App extends Component {
           logged_in: true,
         });
       });
-      
+
   };
 
   handle_logout = () => {
@@ -125,11 +143,66 @@ class App extends Component {
   };
 
   render() {
+    const SidebarStyle = {
+      root: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        overflow: "hidden"
+      },
+      sidebar: {
+        zIndex: 2,
+        position: "absolute",
+        top: 0,
+        bottom: 0,
+        transition: "transform .3s ease-out",
+        WebkitTransition: "-webkit-transform .3s ease-out",
+        willChange: "transform",
+        overflowY: "auto"
+      },
+      content: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        overflowY: "auto",
+        WebkitOverflowScrolling: "touch",
+        transition: "left .3s ease-out, right .3s ease-out"
+      },
+      overlay: {
+        zIndex: 1,
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        opacity: 0,
+        visibility: "hidden",
+        transition: "opacity .3s ease-out, visibility .3s ease-out",
+        backgroundColor: "rgba(0,0,0,.3)"
+      },
+      dragHandle: {
+        zIndex: 1,
+        position: "fixed",
+        top: 0,
+        bottom: 0
+      }
+    };
     return (
       <>
         <Router>
-          <div>
-            <Nav logged_in={this.state.logged_in} handle_logout={this.handle_logout} />
+          <Sidebar
+            sidebar={
+              <Nav logged_in={this.state.logged_in} handle_logout={this.handle_logout} />
+            }
+            docked={this.state.sidebarDocked}
+            open={this.state.sidebarOpen}
+            styles={SidebarStyle}
+            touch={true}>
+            {/* <Button onClick={() => this.onSetSidebarOpen(true)}><GiHamburgerMenu /></Button> */}
 
             {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
@@ -149,7 +222,7 @@ class App extends Component {
 
               </Route>
             </Switch>
-          </div>
+          </Sidebar>
         </Router>
       </>
     );
