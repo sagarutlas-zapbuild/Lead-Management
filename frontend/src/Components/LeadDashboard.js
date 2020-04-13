@@ -1,7 +1,10 @@
 import React from 'react';
 import { Container, ListGroup, ListGroupItem, ListGroupItemHeading, Col, Row } from 'reactstrap'
-import ModalConductor from './Conductors/ModalConductor'
 import { Redirect } from 'react-router-dom';
+import NewModal from './Modals/NewModal'
+import AcceptedModal from './Modals/AcceptedModal'
+import PitchedModal from './Modals/PitchedModal'
+import ResponseGeneratedModal from './Modals/ResponseGeneratedModal'
 
 
 
@@ -12,9 +15,9 @@ class Dashboard extends React.Component {
             displayed_form: '',
             leads: []
         };
+        this.refresh = this.refresh.bind(this)
     }
-
-    componentDidMount() {
+    refresh = () => {
         fetch('http://localhost:8000/leads/', {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -25,9 +28,10 @@ class Dashboard extends React.Component {
             })
             .then((data) => {
                 this.setState({ leads: data })
-                console.log(this.state.leads)
             })
-
+    }
+    componentDidMount() {
+        this.refresh();
     }
 
 
@@ -56,7 +60,16 @@ class Dashboard extends React.Component {
                                             </ListGroupItemHeading>
                                             </ListGroupItem>
 
-                                            {this.Lead_filter("New").map(lead => { return <ListGroupItem action><ModalConductor status='New' lead_title={lead.lead_title} lead_id={lead.lead_id} /></ListGroupItem> })}
+                                            {this.Lead_filter("New")
+                                                .map(lead => {
+                                                    return <ListGroupItem action>
+                                                        <NewModal
+                                                            lead_title={lead.lead_title}
+                                                            lead_id={lead.lead_id}
+                                                            prospect_id={lead.lead_prospect}
+                                                            refresh={this.refresh} />
+                                                    </ListGroupItem>
+                                                })}
 
 
                                         </ListGroup>
@@ -70,7 +83,16 @@ class Dashboard extends React.Component {
                                             </ListGroupItemHeading>
                                             </ListGroupItem>
 
-                                            {this.Lead_filter("Accepted").map(lead => { return <ListGroupItem action><ModalConductor status='Accepted' lead_title={lead.lead_title} lead_id={lead.lead_id} /></ListGroupItem> })}
+                                            {this.Lead_filter("Accepted")
+                                                .map(lead => {
+                                                    return <ListGroupItem action>
+                                                        <AcceptedModal
+                                                            lead_title={lead.lead_title}
+                                                            lead_id={lead.lead_id}
+                                                            prospect_id={lead.lead_prospect}
+                                                            refresh={this.refresh} />
+                                                    </ListGroupItem>
+                                                })}
                                         </ListGroup>
                                     </Col>
                                     <Col sm="3">
@@ -79,24 +101,54 @@ class Dashboard extends React.Component {
 
                                         <ListGroup className="Lead-dashboard-list">
                                             <ListGroupItem color="info">
-
                                                 <ListGroupItemHeading >
                                                     Pitched
-                            </ListGroupItemHeading>   </ListGroupItem>
+                                                </ListGroupItemHeading>
+                                            </ListGroupItem>
 
-                                            {this.Lead_filter("Pitched").map(lead => { return <ListGroupItem action><ModalConductor status='Pitched' lead_title={lead.lead_title} lead_id={lead.lead_id} /></ListGroupItem> })}
+                                            {this.Lead_filter("Pitched")
+                                                .map(lead => {
+                                                    return <ListGroupItem action>
+                                                        <PitchedModal
+                                                            lead_title={lead.lead_title}
+                                                            lead_id={lead.lead_id}
+                                                            prospect_id={lead.lead_prospect}
+                                                            refresh={this.refresh} />
+                                                    </ListGroupItem>
+                                                })}
                                         </ListGroup>
                                     </Col>
+
+
+
+
                                     <Col sm="3">
+
+
+
                                         <ListGroup className="Lead-dashboard-list">
                                             <ListGroupItem color="info">
-
                                                 <ListGroupItemHeading >
                                                     Response Generated
-                            </ListGroupItemHeading>   </ListGroupItem>
-                                            {this.Lead_filter("ResponseGenerated").map(lead => { return <ListGroupItem action><ModalConductor status='ResponseGenerated' lead_title={lead.lead_title} lead_id={lead.lead_id} /></ListGroupItem> })}
+                                                </ListGroupItemHeading>
+                                            </ListGroupItem>
+
+                                            {this.Lead_filter("Response Generated")
+                                                .map(lead => {
+                                                    return <ListGroupItem action>
+                                                        <ResponseGeneratedModal
+                                                            lead_title={lead.lead_title}
+                                                            lead_id={lead.lead_id}
+                                                            prospect_id={lead.lead_prospect}
+                                                            refresh={this.refresh} />
+                                                    </ListGroupItem>
+                                                })}
                                         </ListGroup>
                                     </Col>
+
+
+
+
                                 </Row>
                             </Container>
                         </Col>

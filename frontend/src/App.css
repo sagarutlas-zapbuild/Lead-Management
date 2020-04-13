@@ -13,19 +13,63 @@
   }
 }
 
-.Prospect-details {
-  border: none;
+.Existing-prospect-label {
+  margin-right: 1em;
+  text-decoration: underline;
 }
 
+.Modal-body {
+
+  height: fit-content;
+}
+
+.Prospect-details {
+  border: none;
+  padding-top: 5%;
+  text-align: left;
+}
+.Prospect-box {
+  display: flex;
+    position: relative;
+    text-align: center;
+    border: 1px solid #000000;
+}
 .Prospect-label {
   position:absolute;
   padding: 1%;
   text-align: center;
   border:1px solid black;
   margin-left: 2%;
+  margin-top: -1em;
   background-color:white;
   
 }
+
+.Sidebar-content {
+  text-align: left;
+  font-size: 1.25em;
+  width: 100%;
+  color: #ffffff;
+}
+.Sidebar-content > ul {
+  list-style-type: none;
+  padding: 5%;
+}
+
+.Sidebar-content > ul > li {
+  border: 0.01em solid #ffffff;
+  padding: 0.5em;
+  margin-top: 0.5em;
+}
+
+.Login-form {
+  vertical-align: middle;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+
 
 .Lead-dashboard-list {
   text-align: left;
@@ -53,7 +97,7 @@
 
 .Dashboard {
   height: 100%;
-  width: 100%;
+  width: 100vw;
 }
 
 .Sidebar {
@@ -68,11 +112,18 @@
   
 }
 
+.Prospect-card-list{
+  width: 100%;
+  height: 100%; 
+  overflow-y: scroll;
+}
+
 .Description {
   width: 100%;
-  height: 40%;
-  /* border:1px solid #000000; */
+  height: 20%;
+  margin-bottom: 2em;
   word-wrap: break-word;
+  overflow-y: auto;
 }
 
 .App-header {

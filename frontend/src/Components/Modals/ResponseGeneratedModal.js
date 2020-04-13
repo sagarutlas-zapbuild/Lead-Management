@@ -1,62 +1,41 @@
+/* eslint-disable */
 import React, { useState } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Label } from 'reactstrap';
+import { Link } from 'react-router-dom';
+import { setData, rawLead, rawProspect, Header, Prospect, Description, LeadLabel, MoveTo } from './ModalTools'
 
 const ReasponseGeneratedModal = (props) => {
-  const {lead_title, lead_id} = props;
-
+  const { lead_id, lead_title, prospect_id } = props
   const [modal, setModal] = useState(false);
-  let lead = {};
+  const [lead, setLead] = useState(rawLead);
+  const [prospect, setProspect] = useState(rawProspect);
   const toggle = () => {
     if (!modal) {
-    fetch("http://localhost:8000/leads/"+lead_id, {
-      headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-  })
-      .then(res => {
-          return res.json();
-        })
-        .then((data) => {
-          lead = data
-      }) }  
+      setData(setLead, setProspect, lead_id, prospect_id);
+      setModal(!modal)
+    }
+    else {
       setModal(!modal);
+    }
   }
-
 
   return (
     <div>
 
-      <Label className="Radio-label">{lead_title}</Label>
-      <input type="radio" name="new" onClick={toggle}></input>
+      <LeadLabel lead_title={lead_title} toggle={toggle} />
 
       <Modal className="modal-dailog modal-lg" isOpen={modal} toggle={toggle}>
-        <ModalHeader toggle={toggle}>{lead_title}</ModalHeader>
+        <ModalHeader toggle={toggle}>
+          <Header lead_url={lead.lead_url} lead_title={lead_title} />
+        </ModalHeader>
         <ModalBody>
           <div class="container">
             <div class="row">
 
               <div class="col-sm-8">
 
-                <textarea
-
-                  id="description_new"
-                  rows="5" cols="51" required
-                /*  let value = this.state.data.map(e=>JSON.stringify(e).replace(/{|}/g,'')).join(',\n');
-<textarea value={value}  defaultValue="val" /> */
-                />
-                <div id="margin1" class="float-left w3-border w3-padding">
-                  <label className="text-center"><b>Prospect Detail</b></label>
-
-                </div>
-                <textarea
-                  className="top"
-
-                  id="description_new"
-                  rows="5" cols="51" required
-                /*  let value = this.state.data.map(e=>JSON.stringify(e).replace(/{|}/g,'')).join(',\n');
-<textarea value={value}  defaultValue="val" /> */
-
-                />
+                <Description description={lead.lead_description} />
+                <Prospect prospect={prospect} />
                 <div class="row">
                   <div class="col-lg-12">
                     <button class="btn btn-secondary float-right">Edit</button>
@@ -78,6 +57,10 @@ const ReasponseGeneratedModal = (props) => {
 <textarea value={value}  defaultValue="val" /> */
                 />
                 <br />
+                <div>
+                  <label className="text-center"><b>Attachement</b></label>
+                </div>
+
               </div>
 
 
@@ -85,12 +68,8 @@ const ReasponseGeneratedModal = (props) => {
               <div class="col-sm-4">
                 <div id="margin1">
                   <div className="sidenav">
-                    <div id="margin1">
-                      <b>
-                        <label style={{ textAlign: "center" }}><font size="3" >Accepted</font> </label>
-                      </b>
-                    </div>
-
+                    <b><label><font size="3" > Response Generated</font> </label></b>
+                    <MoveTo lead_id={lead_id} toggle={toggle} refresh={props.refresh} />
                     <br />
                     <label >TAGS</label>
                     <br />
@@ -99,7 +78,7 @@ const ReasponseGeneratedModal = (props) => {
                       id="description_new"
                       rows="3" cols="20" required
                     /*  let value = this.state.data.map(e=>JSON.stringify(e).replace(/{|}/g,'')).join(',\n');
-   
+   ched
     <textarea value={value}  defaultValue="val" /> */
 
                     />
@@ -141,12 +120,13 @@ const ReasponseGeneratedModal = (props) => {
               </div>
             </div>
           </div>
-
-
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={toggle}>Do Something</Button>{' '}
-          <Button color="secondary" onClick={toggle}>Cancel</Button>
+          <Button color="primary" onClick={e => {
+            responseGenerated(lead_id, toggle, props.refresh).then(() => {
+              props.refresh();
+            });
+          }}>Response Generated</Button>{' '}
         </ModalFooter>
       </Modal>
     </div>

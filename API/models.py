@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
+from django.utils.translation import gettext_lazy as _
 """ from django.contrib.auth.models import UserManager """
 
 # Create your models here.
@@ -77,8 +78,16 @@ class User(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=255)
     is_staff = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
+    is_active = models.BooleanField(
+        _('active'),
+        default=True,
+        help_text=_(
+            'Designates whether this user should be treated as active. '
+            'Unselect this instead of deleting accounts.'
+        ),
+    )
     
 
-
+    EMAIL_FIELD = 'user_email'
     USERNAME_FIELD = 'user_email'
     objects = UserManager()

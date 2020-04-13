@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
+import { Button } from 'reactstrap';
 
 class LoginForm extends React.Component {
     state = {
@@ -23,13 +24,13 @@ class LoginForm extends React.Component {
     render() {
         if (!localStorage.token){
         return ( 
-                <form onSubmit={e => this.props.handle_login(e, this.state)} className="form1">
-                <h4>Log In</h4>
+                <form onSubmit={e => this.props.handle_login(e, this.state)} className="Login-form">
+                <h2><u><b>Log In</b></u></h2><br/>
                 <label htmlFor="username"><b>Username :</b>
                 </label>
 
                 <input
-                    type="usename"
+                    type='email'
                     name="username"
                     value={this.state.username}
                     onChange={this.handle_change}
@@ -50,8 +51,10 @@ class LoginForm extends React.Component {
                 />
                 <br />
                 <br />
-                <input type="submit" />
+                <input type="submit" value="Login"/>
+                <Link to="/reset-password">Reset Password</Link>
             </form>
+            
         );}
         else {
             return(<Redirect to='/'/>)

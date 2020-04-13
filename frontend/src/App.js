@@ -63,7 +63,7 @@
 // }
 // export default App;
 
-
+/* eslint-disable */
 import React, { Component } from 'react';
 import Nav from './Components/Nav';
 import LoginForm from './Components/LoginForm';
@@ -79,8 +79,10 @@ import {
   Redirect,
 } from "react-router-dom";
 import Sidebar from 'react-sidebar';
-import { Button } from 'reactstrap';
+import { Button, UncontrolledAlert } from 'reactstrap';
 import { GiHamburgerMenu } from "react-icons/gi"
+import ReactDOM from 'react-dom'
+import { ResetPassword } from './Components/ResetPassword';
 
 const mql = window.matchMedia(`(min-width: 800px)`);
 
@@ -99,12 +101,12 @@ class App extends Component {
 
   }
 
-  componentWillMount() {
+  componentDidMount() {
     mql.addListener(this.mediaQueryChanged);
   }
 
   componentWillUnmount() {
-    this.state.mql.removeListener(this.mediaQueryChanged);
+    mql.removeListener(this.mediaQueryChanged);
   }
 
   onSetSidebarOpen(open) {
@@ -117,23 +119,27 @@ class App extends Component {
 
   handle_login = (e, data) => {
     e.preventDefault();
-    fetch('http://localhost:8000/auth/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-      .then(res => res.json())
-      .then(json => {
-        localStorage.setItem('token', json.token);
-        localStorage.setItem('user_id', json.user.id);
-        localStorage.setItem('user_email', json.user.user_email);
-        localStorage.setItem('user_name', json.user.user_name)
-        this.setState({
-          logged_in: true,
-        });
-      });
+   
+      fetch('http://localhost:8000/auth/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+        .then(res => res.json())
+        .then(json => {
+          localStorage.setItem('token', json.token);
+          localStorage.setItem('user_id', json.user.id);
+          localStorage.setItem('user_email', json.user.user_email);
+          localStorage.setItem('user_name', json.user.user_name)
+          this.setState({
+            logged_in: true,
+          });
+        }).catch( () => {
+          ReactDOM.render()(
+      <UncontrolledAlert color="info">Something went wrong, please try again.</UncontrolledAlert>)
+    });
 
   };
 
@@ -160,7 +166,8 @@ class App extends Component {
         transition: "transform .3s ease-out",
         WebkitTransition: "-webkit-transform .3s ease-out",
         willChange: "transform",
-        overflowY: "auto"
+        overflowY: "auto",
+        backgroundColor: "black"
       },
       content: {
         position: "absolute",
@@ -182,7 +189,7 @@ class App extends Component {
         opacity: 0,
         visibility: "hidden",
         transition: "opacity .3s ease-out, visibility .3s ease-out",
-        backgroundColor: "rgba(0,0,0,.3)"
+        backgroundColor: "rgba(f,f,f,.3)"
       },
       dragHandle: {
         zIndex: 1,
@@ -202,7 +209,6 @@ class App extends Component {
             open={this.state.sidebarOpen}
             styles={SidebarStyle}
             touch={true}>
-            {/* <Button onClick={() => this.onSetSidebarOpen(true)}><GiHamburgerMenu /></Button> */}
 
             {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
@@ -217,9 +223,10 @@ class App extends Component {
                 <LoginForm handle_login={this.handle_login} handle_logout={this.handle_logout} />
               </Route>
               <Route exact path="/logout">
-
                 <this.handle_logout />
-
+              </Route>
+              <Route exact path="/reset-password">
+                <ResetPassword/>
               </Route>
             </Switch>
           </Sidebar>

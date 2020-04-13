@@ -60,19 +60,28 @@ class ProspectViewSet(viewsets.ModelViewSet):
     serializer_class = ProspectSerializer
 
     def list(self, request):
-        serializer = ProspectSerializer(self.queryset, many=True)
-        return Response(serializer.data)
+        data = Prospect.objects.all().values('prospect_full_name',
+                                             'prospect_id',
+                                             'prospect_company',
+                                             'prospect_designation',
+                                             'prospect_phone',
+                                             'prospect_email')
+        return Response(data)
 
     def create(self, request):
         serializer = ProspectSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            except:
+                return Response(serializer.errors, status=status.HTTP_409_CONFLICT)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk=None):
-        prospect = ProspectSerializer(Prospect.objects.get(prospect_id = pk))
-        return Response(Prospect.data)
+        prospect = ProspectSerializer(Prospect.objects.get(prospect_id=pk))
+        return Response(prospect.data)
 
     def update(self, request, pk=None):
         pass
@@ -89,25 +98,43 @@ class LeadViewSet(viewsets.ModelViewSet):
     serializer_class = LeadSerializer
 
     def list(self, request):
-        data = Lead.objects.all().values('lead_id', 'lead_title', 'lead_status')
+        data = Lead.objects.all().values('lead_id',
+                                         'lead_title',
+                                         'lead_status',
+                                         'lead_prospect')
         return Response(data)
 
     def create(self, request):
         serializer = LeadSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            lead = serializer.save()
+            print("\n\nlead\n",lead,"\n\n\n")
+            attachments = request.data['attachments']
+            print("\n\nattachments\n",attachments,"\n\n\n")
+            for attachment in attachments:
+                print("\n\nattachment\n",attachment,"\n\n\n")
+                obj = AttachmentSerializer(data=attachment)
+                print("\n\nobj\n",obj.initial_data, "\n\n\n")
+                if obj.is_valid():
+                    
+                    obj.save()
+                else: 
+                    return Response(obj.errors, status=status.HTTP_400_BAD_REQUEST)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk=None):
-        lead = LeadSerializer(Lead.objects.get(lead_id = pk))
+        lead = LeadSerializer(Lead.objects.get(lead_id=pk))
         return Response(lead.data)
 
     def update(self, request, pk=None):
         pass
 
     def partial_update(self, request, pk=None):
-        pass
+        serializer = LeadSerializer(data=request.data, partial=True)
+        if serializer.update(Lead.objects.get(lead_id=pk), request.data):
+            return Response(serializer.initial_data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, pk=None):
         pass
@@ -122,11 +149,12 @@ class AttachmentViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        serializer = AttachmentSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        for attachment in request.data:
+            serializer = AttachmentSerializer(data=attachment)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk=None):
         pass
