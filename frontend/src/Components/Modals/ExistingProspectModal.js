@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Label, ListGroupItem, ListGroup, Card, CardBody, Col, CardTitle, CardSubtitle, CardText, Row } from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody, ListGroupItem, ListGroup, Card, CardBody, Col, CardTitle, CardSubtitle, CardText, Row } from 'reactstrap';
 import { MdContactMail, MdContactPhone } from 'react-icons/md';
 
 

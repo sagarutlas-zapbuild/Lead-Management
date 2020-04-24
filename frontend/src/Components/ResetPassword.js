@@ -11,6 +11,7 @@ function handleSubmit(e,email) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
+        credentials: "include"
     }).then(res => alert(res.json));
 }
 

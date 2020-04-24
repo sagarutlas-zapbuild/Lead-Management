@@ -62,6 +62,11 @@
   margin-top: 0.5em;
 }
 
+.Alert-custom {
+  position: absolute;
+  z-index: -2;
+}
+
 .Login-form {
   vertical-align: middle;
   justify-content: center;

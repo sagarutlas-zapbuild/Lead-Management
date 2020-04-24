@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Redirect, Link } from 'react-router-dom';
-import { Button } from 'reactstrap';
 
 class LoginForm extends React.Component {
     state = {

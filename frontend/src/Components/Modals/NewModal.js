@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Label } from 'reactstrap';
-import { Link } from 'react-router-dom';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import {
   setData,
   rawLead,
@@ -13,7 +12,6 @@ import {
   LeadLabel,
   getDate
 } from './ModalTools'
-import AcceptedModal from './AcceptedModal';
 //import {AcceptedModal} from './AcceptedModal'
 
 

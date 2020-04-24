@@ -34,7 +34,7 @@ class Leadform extends React.Component {
       prospect_email: '',
       prospect_phone: '',
 
-      attachments: [new File],
+      attachments: [],
       attachment_lead: '',
     }
     this.state = this.initialState;

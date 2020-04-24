@@ -2,7 +2,8 @@
 import React, { useState } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Label } from 'reactstrap';
 import { Link } from 'react-router-dom';
-import { setData, rawLead, rawProspect, Header, Prospect, Description, LeadLabel, MoveTo, responseGenerated } from './ModalTools'
+import { setData, rawLead, rawProspect, Header, Prospect, Description, LeadLabel, MoveTo, responseGenerated, SideNav, getDate } from './ModalTools'
+import { EditModal } from './EditModal';
 
 const PitchedModal = (props) => {
   const { lead_id, lead_title, prospect_id } = props
@@ -63,61 +64,52 @@ const PitchedModal = (props) => {
 
               </div>
 
+{/*sidebar*/}
 
-
-              <div class="col-sm-4">
-                <div id="margin1">
-                  <div className="sidenav">
-                    <b><label><font size="3" > Pitched</font> </label></b>
-                    <MoveTo lead_id={lead_id} toggle={toggle} refresh={props.refresh} />
-                    <br />
-                    <label >TAGS</label>
-                    <br />
-
-                    <textarea
-                      id="description_new"
-                      rows="3" cols="20" required
-                    /*  let value = this.state.data.map(e=>JSON.stringify(e).replace(/{|}/g,'')).join(',\n');
-   
-    <textarea value={value}  defaultValue="val" /> */
-
-                    />
-                    <div class="row">
-                      <div class="col-lg-12">
-                        <button class="btn btn-secondary float-right">Edit</button>
-                      </div>
+              <div className="col-sm-4">
+        <div id="margin1">
+            <div className="sidenav">
+                <b><label><font size="3" > Pitched</font> </label></b>
+                <br />
+                <MoveTo toggle = {toggle} refresh = {props.refresh} lead_id ={lead.lead_id}></MoveTo>
+                <br/>
+                <label >TAGS
+        <div
+                        id="description_new">
+                        {lead.lead_keyword_tags}
                     </div>
-
-                    <label >DOMAIN</label>
-                    <br />
-
-                    <textarea
-                      id="description_new"
-                      rows="3" cols="20" required
-                    /*  let value = this.state.data.map(e=>JSON.stringify(e).replace(/{|}/g,'')).join(',\n');
-   
-    <textarea value={value}  defaultValue="val" /> */
-                    />
-                    <label >TECHNOLOGY</label>
-                    <br />
-
-                    <textarea
-                      id="description_new"
-                      rows="3" cols="20" required
-                    /*  let value = this.state.data.map(e=>JSON.stringify(e).replace(/{|}/g,'')).join(',\n');
-   
-    <textarea value={value}  defaultValue="val" /> */
-                    />
-                    <div class="row">
-                      <div class="col-lg-12">
-                        <button class="btn btn-secondary float-right">Edit</button>
-                      </div>
+                    <EditModal lead_id = {lead.lead_id} property = "Tags" data = {lead.lead_keyword_tags}/>
+                </label>
+                <br />
+                <label >DOMAIN<div
+                    id="description_new">
+                    {lead.lead_domain}
+                </div></label>
+                <br />
+                <label >TECHNOLOGY
+        <div
+                        id="description_new">
+                        {lead.lead_technology}
                     </div>
-
-
-                  </div>
+                </label>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <button class="btn btn-secondary float-right">Edit</button>
+                    </div>
                 </div>
-              </div>
+                <br />
+                <label >Created on
+        <div
+                        id="description_new">
+                        {getDate(lead.lead_date)}
+                    </div>
+                </label>
+                <br />
+            </div>
+        </div>
+    </div>
+
+
             </div>
           </div>
         </ModalBody>

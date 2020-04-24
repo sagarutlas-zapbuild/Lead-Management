@@ -116,7 +116,7 @@ export const Header = (props) => {
         {lead_title + "   "}
     </strong>
         <small>
-            <a target="_blank" href={lead_url}>
+            <a href={lead_url}>
                 {"(" + lead_url + ")"}
             </a>
         </small></>);
@@ -202,7 +202,7 @@ export const Description = (props) => {
 
 const MoveToToggle = React.forwardRef(({ children, onClick }, ref) => (
     <a
-        href=""
+        href="/#"
         ref={ref}
         onClick={(e) => {
             e.preventDefault();
@@ -247,36 +247,85 @@ export const MoveTo = (props) => {
 
             <Dropdown.Menu as={MoveToMenu}>
                 {/* remove this one */}
-            <Dropdown.Item onClick={(e) => { setToNew(props.lead_id, props.toggle).then(()=>props.refresh()) }}>
+                <Dropdown.Item onClick={(e) => { setToNew(props.lead_id, props.toggle).then(() => props.refresh()) }}>
                     New
           </Dropdown.Item>
                 {/* till here */}
-                <Dropdown.Item onClick={(e) => { accepted(props.lead_id, props.toggle).then(()=>props.refresh()) }}>
+                <Dropdown.Item onClick={(e) => { accepted(props.lead_id, props.toggle).then(() => props.refresh()) }}>
                     Accepted
                     </Dropdown.Item>
-                <Dropdown.Item onClick={(e) => { pitched(props.lead_id, props.toggle).then(()=>props.refresh()) }}>
+                <Dropdown.Item onClick={(e) => { pitched(props.lead_id, props.toggle).then(() => props.refresh()) }}>
                     Pitched
                     </Dropdown.Item>
-                <Dropdown.Item onClick={(e) => { responseGenerated(props.lead_id, props.toggle).then(()=>props.refresh()) }}>
+                <Dropdown.Item onClick={(e) => { responseGenerated(props.lead_id, props.toggle).then(() => props.refresh()) }}>
                     Response Generated
           </Dropdown.Item>
-          <Dropdown.Item onClick={(e) => { needAnalysis(props.lead_id, props.toggle).then(()=>props.refresh()) }}>
+                <Dropdown.Item onClick={(e) => { needAnalysis(props.lead_id, props.toggle).then(() => props.refresh()) }}>
                     Need Analysis
           </Dropdown.Item>
-          <Dropdown.Item onClick={(e) => { wireframing(props.lead_id, props.toggle).then(()=>props.refresh()) }}>
+                <Dropdown.Item onClick={(e) => { wireframing(props.lead_id, props.toggle).then(() => props.refresh()) }}>
                     Wireframing
           </Dropdown.Item>
-          <Dropdown.Item onClick={(e) => { negotiation(props.lead_id, props.toggle).then(()=>props.refresh()) }}>
+                <Dropdown.Item onClick={(e) => { negotiation(props.lead_id, props.toggle).then(() => props.refresh()) }}>
                     Negotiation
           </Dropdown.Item>
-          <Dropdown.Item onClick={(e) => { closedAsWon(props.lead_id, props.toggle).then(()=>props.refresh()) }}>
+                <Dropdown.Item onClick={(e) => { closedAsWon(props.lead_id, props.toggle).then(() => props.refresh()) }}>
                     Closed as won
           </Dropdown.Item>
-          <Dropdown.Item onClick={(e) => { closedAsLost(props.lead_id, props.toggle).then(()=>props.refresh()) }}>
+                <Dropdown.Item onClick={(e) => { closedAsLost(props.lead_id, props.toggle).then(() => props.refresh()) }}>
                     Closed as lost
           </Dropdown.Item>
             </Dropdown.Menu>
         </Dropdown>)
+}
+
+
+export const SideNav = (props) => {
+    return (<div className="col-sm-4">
+        <div id="margin1">
+            <div className="sidenav">
+                <b><label><font size="3" > {props.status}</font> </label></b>
+                <br />
+                <MoveTo toggle = {props.toggle} refresh = {props.refresh}></MoveTo>
+                <label >TAGS
+        <div
+                        id="description_new">
+                        {props.lead_keyword_tags}
+                    </div>
+                </label>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <button class="btn btn-secondary float-right">Edit</button>
+                    </div>
+                </div>
+                <br />
+                <label >DOMAIN<div
+                    id="description_new">
+                    {props.lead_domain}
+                </div></label>
+                <br />
+                <label >TECHNOLOGY
+        <div
+                        id="description_new">
+                        {props.lead_technology}
+                    </div>
+                </label>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <button class="btn btn-secondary float-right">Edit</button>
+                    </div>
+                </div>
+                <br />
+                <label >Created on
+        <div
+                        id="description_new">
+                        {getDate(props.lead_date)}
+                    </div>
+                </label>
+                <br />
+            </div>
+        </div>
+    </div>)
 }
 
 
@@ -290,3 +339,4 @@ export const MoveTo = (props) => {
 
 
 //remove any code below this line
+

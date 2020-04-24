@@ -79,7 +79,7 @@ import {
   Redirect,
 } from "react-router-dom";
 import Sidebar from 'react-sidebar';
-import { Button, UncontrolledAlert } from 'reactstrap';
+import { Button, UncontrolledAlert, Alert } from 'reactstrap';
 import { GiHamburgerMenu } from "react-icons/gi"
 import ReactDOM from 'react-dom'
 import { ResetPassword } from './Components/ResetPassword';
@@ -93,7 +93,9 @@ class App extends Component {
       displayed_form: '',
       logged_in: localStorage.getItem('token') ? true : false,
       sidebarDocked: mql.matches,
-      sidebarOpen: false
+      sidebarOpen: false,
+      error: false,
+      error_data: "error"
     };
     this.handle_logout = this.handle_logout.bind(this);
     this.mediaQueryChanged = this.mediaQueryChanged.bind(this);
@@ -135,10 +137,11 @@ class App extends Component {
           localStorage.setItem('user_name', json.user.user_name)
           this.setState({
             logged_in: true,
+            error: false
           });
-        }).catch( () => {
-          ReactDOM.render()(
-      <UncontrolledAlert color="info">Something went wrong, please try again.</UncontrolledAlert>)
+        }).catch( (err) => {
+          this.setState({error: true,
+          error_data: "Login error"});
     });
 
   };
@@ -200,6 +203,7 @@ class App extends Component {
     };
     return (
       <>
+      
         <Router>
           <Sidebar
             sidebar={
@@ -231,6 +235,7 @@ class App extends Component {
             </Switch>
           </Sidebar>
         </Router>
+        <Alert color="danger" isOpen={this.state.error}>{this.state.error_data}</Alert>
       </>
     );
   }
