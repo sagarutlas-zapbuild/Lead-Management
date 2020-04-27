@@ -54,6 +54,8 @@ class Lead(models.Model):
     lead_status = models.CharField(max_length=20, default='New')
     lead_keyword_tags = models.CharField(max_length=100)
     lead_date = models.DateTimeField(auto_now_add=True)
+    def __str__(self): 
+         return self.lead_title
 
 
 class Attachment(models.Model):

@@ -84,10 +84,19 @@ class ProspectViewSet(viewsets.ModelViewSet):
         return Response(prospect.data)
 
     def update(self, request, pk=None):
-        pass
+        serializer = ProspectSerializer(data=request.data)
+        """ if serializer.is_valid(): 
+            serializer.update()
+            return Response(serializer.data, status=status.HTTP_201_CREATED) """
+        if serializer.update(Prospect.objects.get(prospect_id=pk), request.data):
+            return Response(serializer.initial_data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, pk=None):
-        pass
+        serializer = ProspectSerializer(data=request.data, partial=True)
+        if serializer.update(Prospect.objects.get(prospect_id=pk), request.data):
+            return Response(serializer.initial_data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, pk=None):
         pass
@@ -112,6 +121,8 @@ class LeadViewSet(viewsets.ModelViewSet):
             attachments = request.data['attachments']
             print("\n\nattachments\n",attachments,"\n\n\n")
             for attachment in attachments:
+                attachment = {'attachment': attachment}
+                attachment['attachment_lead']= lead.lead_id
                 print("\n\nattachment\n",attachment,"\n\n\n")
                 obj = AttachmentSerializer(data=attachment)
                 print("\n\nobj\n",obj.initial_data, "\n\n\n")
@@ -141,7 +152,7 @@ class LeadViewSet(viewsets.ModelViewSet):
 
 
 class AttachmentViewSet(viewsets.ModelViewSet):
-    queryset = Attachment.objects.all()
+    queryset = Attachment.objects.all().order_by('attachment_lead')
     serializer_class = AttachmentSerializer
 
     def list(self, request):

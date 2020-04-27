@@ -34,7 +34,7 @@ class Leadform extends React.Component {
       prospect_email: '',
       prospect_phone: '',
 
-      attachments: [],
+      attachments: FileList,
       attachment_lead: '',
     }
     this.state = this.initialState;
@@ -55,9 +55,8 @@ class Leadform extends React.Component {
   }
 
   handleFiles(event) {
-    const value = (event.target.files);
+    const value = (event.target.files[0]);
     this.setState({ attachments: value });
-    alert(this.state.attachments)
   }
 
   clearProspect() {
@@ -127,26 +126,27 @@ class Leadform extends React.Component {
     }
   }
 
-  
+
 
   handelSubmit = (event) => {
     event.preventDefault();
     //If prospect is not fixed, POST it and then set the 
     this.ensureProspect().then(() => {
-      const lead = {
-        lead_title: this.state.lead_title,
-        lead_source: this.state.lead_source,
-        lead_description: this.state.lead_description,
-        lead_url: this.state.lead_url,
-        lead_domain: this.state.lead_domain,
-        lead_technology: this.state.lead_technology,
-        lead_estimated_budget: this.state.lead_estimated_budget,
-        lead_reffered_by: this.state.lead_reffered_by,
-        lead_assignee: this.state.lead_assignee,
-        lead_prospect: this.state.lead_prospect,
-        attachments: this.state.attachments,
-        lead_keyword_tags: this.state.lead_keyword_tags
-      }
+      const lead = new FormData()
+
+      lead.append('lead_title', this.state.lead_title)
+      lead.append('lead_source', this.state.lead_source)
+      lead.append('lead_description', this.state.lead_description)
+      lead.append('lead_url', this.state.lead_url)
+      lead.append('lead_domain', this.state.lead_domain)
+      lead.append('lead_technology', this.state.lead_technology)
+      lead.append('lead_estimated_budget', this.state.lead_estimated_budget)
+      lead.append('lead_reffered_by', this.state.lead_reffered_by)
+      lead.append('lead_assignee', this.state.lead_assignee)
+      lead.append('lead_prospect', this.state.lead_prospect)
+      lead.append('attachments', this.state.attachments)
+      lead.append('lead_keyword_tags', this.state.lead_keyword_tag)
+
 
       fetch("http://127.0.0.1:8000/leads/",
         {
@@ -154,7 +154,6 @@ class Leadform extends React.Component {
 
           body: JSON.stringify(lead),
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         }
@@ -256,7 +255,7 @@ class Leadform extends React.Component {
                       Attachment
             </label>
                     <input className="control-inputcol-sm-3" type="file" name="attachment" multiple={true}
-                       onChange={this.handleFiles}
+                      onChange={this.handleFiles}
                     />
 
                   </div>

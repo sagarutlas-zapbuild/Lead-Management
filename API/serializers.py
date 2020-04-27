@@ -30,8 +30,7 @@ class LeadSerializer(serializers.ModelSerializer):
 
 
 class AttachmentSerializer(serializers.ModelSerializer):
-    attachment_lead = LeadSerializer()
-
+    
     class Meta:
         model = Attachment
         fields = ('attachment_id', 'attachment', 'attachment_lead')

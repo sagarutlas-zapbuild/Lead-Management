@@ -22,6 +22,7 @@ export const rawLead =
 
 export const rawProspect =
 {
+    prospect_id: -1,
     prospect_full_name: "",
     prospect_company: "",
     prospect_designation: "",
@@ -286,7 +287,7 @@ export const SideNav = (props) => {
             <div className="sidenav">
                 <b><label><font size="3" > {props.status}</font> </label></b>
                 <br />
-                <MoveTo toggle = {props.toggle} refresh = {props.refresh}></MoveTo>
+                <MoveTo toggle={props.toggle} refresh={props.refresh}></MoveTo>
                 <label >TAGS
         <div
                         id="description_new">

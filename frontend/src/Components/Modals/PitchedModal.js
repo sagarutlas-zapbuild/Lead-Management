@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Label } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { setData, rawLead, rawProspect, Header, Prospect, Description, LeadLabel, MoveTo, responseGenerated, SideNav, getDate } from './ModalTools'
-import { EditModal } from './EditModal';
+import { EditModal, EditProspectModal } from './EditModal';
 
 const PitchedModal = (props) => {
   const { lead_id, lead_title, prospect_id } = props
@@ -22,7 +22,7 @@ const PitchedModal = (props) => {
 
   return (
     <div>
-
+{console.log(prospect)}
       <LeadLabel lead_title={lead_title} toggle={toggle} />
 
       <Modal className="modal-dailog modal-lg" isOpen={modal} toggle={toggle}>
@@ -37,11 +37,7 @@ const PitchedModal = (props) => {
 
                 <Description description={lead.lead_description} />
                 <Prospect prospect={prospect} />
-                <div class="row">
-                  <div class="col-lg-12">
-                    <button class="btn btn-secondary float-right">Edit</button>
-                  </div>
-                </div>
+                <EditProspectModal update ={() => { setData(setLead, setProspect, lead_id, prospect_id); }} data = {prospect}/>
                 <br />
                 <br />
 
@@ -64,50 +60,52 @@ const PitchedModal = (props) => {
 
               </div>
 
-{/*sidebar*/}
+              {/*sidebar*/}
 
               <div className="col-sm-4">
-        <div id="margin1">
-            <div className="sidenav">
-                <b><label><font size="3" > Pitched</font> </label></b>
-                <br />
-                <MoveTo toggle = {toggle} refresh = {props.refresh} lead_id ={lead.lead_id}></MoveTo>
-                <br/>
-                <label >TAGS
-        <div
-                        id="description_new">
+                <div id="margin1">
+                  <div className="sidenav">
+                    <b><label><h3> Pitched</h3> </label></b>
+                    <br />
+                    <MoveTo toggle={toggle} refresh={props.refresh} lead_id={lead.lead_id}></MoveTo>
+                    <br />
+                    <label ><b>TAGS</b>
+        <div id="description_new">
                         {lead.lead_keyword_tags}
-                    </div>
-                    <EditModal lead_id = {lead.lead_id} property = "Tags" data = {lead.lead_keyword_tags}/>
-                </label>
-                <br />
-                <label >DOMAIN<div
-                    id="description_new">
-                    {lead.lead_domain}
-                </div></label>
-                <br />
-                <label >TECHNOLOGY
-        <div
-                        id="description_new">
+                      </div>
+                      <EditModal lead_id={lead.lead_id}
+                        title="TAGS"
+                        update={() => { setData(setLead, setProspect, lead_id, prospect_id); }}
+                        property="lead_keyword_tags"
+                        data={lead.lead_keyword_tags} />
+                    </label>
+                    <br />
+                    <label ><b>DOMAIN</b><div
+                      id="description_new">
+                      {lead.lead_domain}
+                    </div></label>
+                    <br />
+                    <label><b>TECHNOLOGY</b>
+        <div id="description_new">
                         {lead.lead_technology}
-                    </div>
-                </label>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <button class="btn btn-secondary float-right">Edit</button>
-                    </div>
-                </div>
-                <br />
-                <label >Created on
+                      </div>
+                      <EditModal lead_id={lead.lead_id}
+                        title="TECHNOLOGY"
+                        update={() => { setData(setLead, setProspect, lead_id, prospect_id); }}
+                        property="lead_technology"
+                        data={lead.lead_technology} />
+                    </label>
+                    <br />
+                    <label ><b>Created on</b>
         <div
                         id="description_new">
                         {getDate(lead.lead_date)}
-                    </div>
-                </label>
-                <br />
-            </div>
-        </div>
-    </div>
+                      </div>
+                    </label>
+                    <br />
+                  </div>
+                </div>
+              </div>
 
 
             </div>
