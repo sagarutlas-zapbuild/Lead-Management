@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Label } from 'reactstrap';
 import { setData, rawLead, rawProspect, Header, Prospect, Description, LeadLabel, MoveTo, SideNav, getDate } from './ModalTools'
 import { EditModal, EditProspectModal } from './EditModal';
+import { CommentModal } from './CommentModal';
 
 export const AcceptedModal = (props) => {
   const { lead_id, lead_title, prospect_id } = props
@@ -11,11 +12,20 @@ export const AcceptedModal = (props) => {
   const [nestedModal1, setNestedModal1] = useState(false);
   const [closeAll, setCloseAll] = useState(false);
   const [lead, setLead] = useState(rawLead);
+  const [attachments, setAttachments] = useState([{ attachment: "", attachment_id: "" }]);
+  const [comments, setComments] = useState([{ comment: "", comment_id: "" }]);
   const [prospect, setProspect] = useState(rawProspect);
   const toggle = () => {
     if (!modal) {
 
-      setData(setLead, setProspect, lead_id, prospect_id);
+      setData({
+        setLead: setLead,
+        setProspect: setProspect,
+        lead_id: lead_id,
+        prospect_id: prospect_id,
+        setAttachments: setAttachments,
+        setComments: setComments
+      });
       setModal(!modal);
 
     }
@@ -44,31 +54,50 @@ export const AcceptedModal = (props) => {
           <Header lead_url={lead.lead_url} lead_title={lead_title} />
         </ModalHeader>
         <ModalBody>
-          <div class="container">
+          <div className="container">
             <div class="row">
               <div class="col-sm-8">
                 <Description description={lead.lead_description} />
                 <Prospect prospect={prospect} />
-                <EditProspectModal update={() => { setData(setLead, setProspect, lead_id, prospect_id); }} data={prospect} />
+                <EditProspectModal update={() => { setData(setLead, setProspect, lead_id, prospect_id, setAttachments, setComments); }} data={prospect} />
                 <div id="margin1" class="float-left w3-border w3-padding">
                   <label className="text-center"><b>Comments</b></label>
                 </div>
-                <textarea
-                  className="top"
-                  id="description_new"
-                  rows="5" cols="51"
-                /*  let value = this.state.data.map(e=>JSON.stringify(e).replace(/{|}/g,'')).join(',\n');
-<textarea value={value}  defaultValue="val" /> */
-                />
+                <div className="Description">
+                  {comments.map(comment => {
+                    return (<label>
+                      {" " + comment.comment}
+                    </label>)
+
+                  })}
+                </div>
                 <div class="row">
-                  <div class="col-lg-12">
-                    <button onClick={toggleNested} class="btn btn-secondary float-right">Add</button>
-                  </div>
+                  <CommentModal 
+                  lead_id = {lead_id}
+                  update={() => { setData({lead_id:lead_id, setComments:setComments}); }} />
                 </div>
                 <div>
-                  <label className="text-center"><b>Attachement</b></label>
-                  <input className="control-input col-sm-7" type="file" id="attachment"
-                  />
+                  <label className="text-center"><b>Attachement</b>
+                    {attachments.map(attachment => {
+                      return (<a href={"http://localhost:8000/get_file/" + attachment.attachment_id + "/"}>
+                        {" " + attachment.attachment}
+                      </a>)
+                    })}
+                  </label>
+                  <input className="control-input col-sm-7" type="file" id="attachment" onChange={(event)=>{const attachments = new FormData();
+    attachments.append('attachment', event.target.files[0]);
+    attachments.append('attachment_lead', lead_id);
+
+    fetch("http://127.0.0.1:8000/attachments/",
+      {
+        method: 'POST',
+
+        body: attachments,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    ).then(()=>{setData({setComments:setComments, lead_id:lead_id})});}}/>
                 </div>
               </div>
 
@@ -87,7 +116,7 @@ export const AcceptedModal = (props) => {
                       </div>
                       <EditModal lead_id={lead.lead_id}
                         title="TAGS"
-                        update={() => { setData(setLead, setProspect, lead_id, prospect_id); }}
+                        update={() => { setData({ setLead: setLead, setProspect: setProspect, lead_id: lead_id, prospect_id: prospect_id }); }}
                         property="lead_keyword_tags"
                         data={lead.lead_keyword_tags} />
                     </label>
@@ -103,7 +132,7 @@ export const AcceptedModal = (props) => {
                       </div>
                       <EditModal lead_id={lead.lead_id}
                         title="TECHNOLOGY"
-                        update={() => { setData(setLead, setProspect, lead_id, prospect_id); }}
+                        update={() => { setData({ setLead: setLead, setProspect: setProspect, lead_id: lead_id, prospect_id: prospect_id }); }}
                         property="lead_technology"
                         data={lead.lead_technology} />
                     </label>
@@ -126,48 +155,6 @@ export const AcceptedModal = (props) => {
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={toggleNested1}>PITCHED</Button>{' '}
-          <Modal isOpen={nestedModal} toggle={toggleNested} onClosed={closeAll ? toggle : undefined}>
-            <ModalHeader>Comments</ModalHeader>
-            <ModalBody>
-              <form>
-                <div id="margin">
-                  <div className="form-group">
-                    <textarea
-                      className="form-control"
-                      id="description_new"
-                      rows="5" required
-                    />
-                  </div>
-                </div>
-              </form>
-            </ModalBody>
-            <ModalFooter>
-              <Button onClick={toggle} color="primary">Submit</Button>
-            </ModalFooter>
-          </Modal>
-
-          <Modal isOpen={nestedModal1} toggle={toggleNested1} onClosed={closeAll ? toggle : undefined}>
-            <ModalHeader toggle={toggle}>{lead_title}</ModalHeader>
-            <ModalBody>
-              <form>
-                <label>Estimated Budget ($) : </label>
-                <button class="btn btn-secondary float-right">Edit</button>
-                <div id="margin">
-                  <div className="form-group">
-                    <label> Add Remarks/Details</label>
-                    <textarea
-                      className="form-control"
-                      id="description_new"
-                      rows="5" required
-                    />
-                  </div>
-                </div>
-              </form>
-            </ModalBody>
-            <ModalFooter>
-              <Button onClick={toggle} color="primary" >Submit</Button>
-            </ModalFooter>
-          </Modal>
 
         </ModalFooter>
       </Modal>

@@ -1,29 +1,63 @@
 from django.shortcuts import render
 
-from rest_framework import viewsets
+from rest_framework import viewsets, renderers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import LeadSerializer, ProspectSerializer, AttachmentSerializer, CommentSerializer, UserSerializer
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse
+from django.core.files.base import ContentFile
 from rest_framework import status
 from .models import Lead, Prospect, Attachment, Comment, User
 from rest_framework.decorators import action
 from rest_framework_jwt import authentication
 from rest_framework_jwt.views import VerifyJSONWebToken
 import json
+import base64
+import pdb
+import six
 from rest_framework.decorators import api_view
 
 # Create your views here.
-
+class MyRenderer(renderers.BaseRenderer):
+    """
+        Return data as-is. View should supply a Response.
+    """
+    media_type = ''
+    format = ''
+    def render(self, data, accepted_media_type=None, renderer_context=None):
+        return data
 
 @api_view(['GET'])
-def current_user(request):
+def lead_attachments(request, lead=None):
     """
-    Determine the current user by their token, and return their data
+    get attachments of a lead
     """
-
-    serializer = UserSerializer(request.user)
+    serializer = AttachmentSerializer(
+        Attachment.objects.filter(attachment_lead=lead), many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def lead_comments(request, lead=None):
+    """
+    get comments of a lead
+    """
+    serializer = CommentSerializer(
+        Comment.objects.filter(comment_lead=lead), many=True)
+    return Response(serializer.data)
+
+
+@action(Method=['GET'], detail=True, renderer_classes=(MyRenderer,))
+def get_file(request, pk=None):
+    """
+    get the uploaded file
+    """
+    instance = Attachment.objects.get(attachment_id=pk)
+    file = instance.attachment.file.open()
+    response = FileResponse(file, content_type=None)
+    """ response['Content-Length'] = instance.attachment.size
+    response['Content-Disposition'] = 'attachment; filename="%s"' % instance.attachment.name """
+
+    return response
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -85,9 +119,6 @@ class ProspectViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         serializer = ProspectSerializer(data=request.data)
-        """ if serializer.is_valid(): 
-            serializer.update()
-            return Response(serializer.data, status=status.HTTP_201_CREATED) """
         if serializer.update(Prospect.objects.get(prospect_id=pk), request.data):
             return Response(serializer.initial_data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -117,20 +148,6 @@ class LeadViewSet(viewsets.ModelViewSet):
         serializer = LeadSerializer(data=request.data)
         if serializer.is_valid():
             lead = serializer.save()
-            print("\n\nlead\n",lead,"\n\n\n")
-            attachments = request.data['attachments']
-            print("\n\nattachments\n",attachments,"\n\n\n")
-            for attachment in attachments:
-                attachment = {'attachment': attachment}
-                attachment['attachment_lead']= lead.lead_id
-                print("\n\nattachment\n",attachment,"\n\n\n")
-                obj = AttachmentSerializer(data=attachment)
-                print("\n\nobj\n",obj.initial_data, "\n\n\n")
-                if obj.is_valid():
-                    
-                    obj.save()
-                else: 
-                    return Response(obj.errors, status=status.HTTP_400_BAD_REQUEST)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -160,12 +177,13 @@ class AttachmentViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        for attachment in request.data:
-            serializer = AttachmentSerializer(data=attachment)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        print(request.data)
+        """ for attachment in request.data: """
+        serializer = AttachmentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk=None):
         pass

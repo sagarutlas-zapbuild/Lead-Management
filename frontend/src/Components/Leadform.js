@@ -38,14 +38,14 @@ class Leadform extends React.Component {
       attachment_lead: '',
     }
     this.state = this.initialState;
-    this.handelChange = this.handelChange.bind(this);
-    this.handelSubmit = this.handelSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.handleFiles = this.handleFiles.bind(this);
     this.selectProspect = this.selectProspect.bind(this);
     this.clearProspect = this.clearProspect.bind(this)
   }
 
-  handelChange(event) {
+  handleChange(event) {
     const name = event.target.name;
     const value = event.target.value;
     this.setState({
@@ -92,84 +92,90 @@ class Leadform extends React.Component {
       });
   }
 
-  ensureProspect = async () => {
-    if (!this.state.fixed_prospect) {
-      const prospect = {
-        prospect_full_name: this.state.prospect_full_name,
-        prospect_company: this.state.prospect_company,
-        prospect_designation: this.state.prospect_designation,
-        prospect_skype_id: this.state.prospect_skype_id,
-        prospect_street_address: this.state.prospect_street_address,
-        prospect_city: this.state.prospect_city,
-        prospect_state: this.state.prospect_state,
-        prospect_country: this.state.prospect_country,
-        prospect_phone: this.state.prospect_phone,
-        prospect_email: this.state.prospect_email
-      }
-      fetch("http://127.0.0.1:8000/leads/",
-        {
-          method: 'POST',
-
-          body: JSON.stringify(prospect),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        }
-      ).then(response => {
-        console.log(response)
-        this.setState({ lead_prospect: response.prospect_id });
-      })
-        .catch(error => {
-          console.log(error)
-        });
-    }
-  }
-
-
-
-  handelSubmit = (event) => {
+  
+  handleSubmit = async (event) => {
     event.preventDefault();
-    //If prospect is not fixed, POST it and then set the 
-    this.ensureProspect().then(() => {
-      const lead = new FormData()
+    //If prospect is not fixed, POST it and then set the lead_prospect
 
-      lead.append('lead_title', this.state.lead_title)
-      lead.append('lead_source', this.state.lead_source)
-      lead.append('lead_description', this.state.lead_description)
-      lead.append('lead_url', this.state.lead_url)
-      lead.append('lead_domain', this.state.lead_domain)
-      lead.append('lead_technology', this.state.lead_technology)
-      lead.append('lead_estimated_budget', this.state.lead_estimated_budget)
-      lead.append('lead_reffered_by', this.state.lead_reffered_by)
-      lead.append('lead_assignee', this.state.lead_assignee)
-      lead.append('lead_prospect', this.state.lead_prospect)
-      lead.append('attachments', this.state.attachments)
-      lead.append('lead_keyword_tags', this.state.lead_keyword_tag)
-
-
-      fetch("http://127.0.0.1:8000/leads/",
+    if (!this.state.fixed_prospect) {
+      const prospect = new FormData(); 
+      prospect.append('prospect_full_name', this.state.prospect_full_name);
+      prospect.append('prospect_company', this.state.prospect_company);
+      prospect.append('prospect_designation', this.state.prospect_designation);
+      prospect.append('prospect_skype_id', this.state.prospect_skype_id);
+      prospect.append('prospect_street_address', this.state.prospect_street_address);
+      prospect.append('prospect_city', this.state.prospect_city);
+      prospect.append('prospect_state', this.state.prospect_state);
+      prospect.append('prospect_country', this.state.prospect_country);
+      prospect.append('prospect_phone', this.state.prospect_phone);
+      prospect.append('prospect_email', this.state.prospect_email);
+      
+      let response = await fetch("http://127.0.0.1:8000/prospects/",
         {
           method: 'POST',
 
-          body: JSON.stringify(lead),
+          body: prospect,
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         }
-      ).then(response => {
-        console.log(response)
-      })
-        .catch(error => {
-          console.log(error)
-        });
-    });
+      );
+      response = await response.json();
+      this.setState({lead_prospect: response.prospect_id});
+
+        
+    }
+
+    const lead = new FormData();
+
+
+    lead.append('lead_title', this.state.lead_title);
+    lead.append('lead_source', this.state.lead_source);
+    lead.append('lead_description', this.state.lead_description);
+    lead.append('lead_url', this.state.lead_url);
+    lead.append('lead_domain', this.state.lead_domain);
+    lead.append('lead_technology', this.state.lead_technology);
+    lead.append('lead_estimated_budget', this.state.lead_estimated_budget);
+    lead.append('lead_reffered_by', this.state.lead_reffered_by);
+    lead.append('lead_assignee', this.state.lead_assignee);
+    lead.append('lead_prospect', this.state.lead_prospect);
+    lead.append('lead_keyword_tags', this.state.lead_keyword_tag);
+
+
+    let response = await fetch("http://127.0.0.1:8000/leads/",
+      {
+        method: 'POST',
+
+        body: lead,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    );
+    response = await response.json();
+    this.setState({attachment_lead: response.lead_id});
+
+    const attachments = new FormData();
+    attachments.append('attachment', this.state.attachments);
+    attachments.append('attachment_lead', this.state.attachment_lead);
+
+    fetch("http://127.0.0.1:8000/attachments/",
+      {
+        method: 'POST',
+
+        body: attachments,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    );
+
   }
 
   render() {
     return (
       <Container>
-        <form onSubmit={this.handelSubmit}>
+        <form onSubmit={this.handleSubmit}>
           <div id="margin">
             <b>
               <label>  <h2>New Lead</h2>
@@ -185,14 +191,14 @@ class Leadform extends React.Component {
                       <input type="text"
                         className="form-control"
                         name="lead_title"
-                        value={this.state.lead_title} onChange={this.handelChange}
+                        value={this.state.lead_title} onChange={this.handleChange}
                       />
                     </div>
                   </Col>
                   <Col >
                     <div className="form-group">
                       <label>Source*</label><br></br>
-                      <select name="lead_source" value={this.state.lead_source} onChange={this.handelChange} className="form-control">
+                      <select name="lead_source" value={this.state.lead_source} onChange={this.handleChange} className="form-control">
                         <option>choose any one</option>
                         <option select>java</option>
                         <option select>php</option>
@@ -211,7 +217,7 @@ class Leadform extends React.Component {
                       className="form-control"
                       rows="8" required
                       name="lead_description"
-                      value={this.state.lead_description} onChange={this.handelChange}
+                      value={this.state.lead_description} onChange={this.handleChange}
                     />
                   </div>
                 </Col>
@@ -223,7 +229,7 @@ class Leadform extends React.Component {
                     <input type="url"
                       className="form-control"
                       name="lead_url"
-                      value={this.state.lead_url} onChange={this.handelChange}
+                      value={this.state.lead_url} onChange={this.handleChange}
                     />
                     <div className="form-group">
                       <label>
@@ -232,7 +238,7 @@ class Leadform extends React.Component {
                       <input type="text"
                         className="form-control"
                         name="lead_domain"
-                        value={this.state.lead_domain} onChange={this.handelChange}
+                        value={this.state.lead_domain} onChange={this.handleChange}
                       />
                     </div>
                     <div className="form-group">
@@ -242,7 +248,7 @@ class Leadform extends React.Component {
                       <input type="text"
                         className="form-control"
                         name="lead_keyword_tags"
-                        value={this.state.lead_keyword_tags} onChange={this.handelChange}
+                        value={this.state.lead_keyword_tags} onChange={this.handleChange}
                       />
                     </div>
                   </div>
@@ -254,7 +260,7 @@ class Leadform extends React.Component {
                     <label className="control-label col-sm-9">
                       Attachment
             </label>
-                    <input className="control-inputcol-sm-3" type="file" name="attachment" multiple={true}
+                    <input type="file" name="attachment" multiple
                       onChange={this.handleFiles}
                     />
 
@@ -263,7 +269,7 @@ class Leadform extends React.Component {
                 <Col >
                   <div className="form-group">
                     <label>Technology*</label><br></br>
-                    <select name="lead_technology" value={this.state.lead_technology} onChange={this.handelChange} className="form-control">
+                    <select name="lead_technology" value={this.state.lead_technology} onChange={this.handleChange} className="form-control">
                       <option>choose any one</option>
                       <option select>django</option>
                       <option select>python</option>
@@ -278,7 +284,7 @@ class Leadform extends React.Component {
                       Estimated Budget($)
             </label>
                     <input className="control-input col-sm-7" name="lead_estimated_budget" type="Text"
-                      value={this.state.lead_estimated_budget} onChange={this.handelChange} width="50px">
+                      value={this.state.lead_estimated_budget} onChange={this.handleChange} width="50px">
                     </input>
                   </div>
                   <div className="form-group">
@@ -288,7 +294,7 @@ class Leadform extends React.Component {
                     <input className="control-input col-sm-7"
                       type="Text"
                       name="lead_reffered_by"
-                      value={this.state.lead_reffered_by} onChange={this.handelChange}
+                      value={this.state.lead_reffered_by} onChange={this.handleChange}
                       width="50px">
                     </input>
                   </div>
@@ -305,7 +311,7 @@ class Leadform extends React.Component {
                       Assigned To
 
             </label>
-                    <select name="lead_assignee" value={this.state.lead_assignee} onChange={this.handelChange} className="control-label col-sm-6">
+                    <select name="lead_assignee" value={this.state.lead_assignee} onChange={this.handleChange} className="control-label col-sm-6">
                       <option>choose any one</option>
                       <option select>Aman</option>
                       <option select>Sagar</option>
@@ -339,7 +345,7 @@ class Leadform extends React.Component {
                               Full Name
             </label>
                             <input className="control-input col-sm-6" name="prospect_full_name"
-                              value={this.state.prospect_full_name} onChange={this.handelChange}
+                              value={this.state.prospect_full_name} onChange={this.handleChange}
                               type="Text" width="50px">
                             </input>
                           </div>
@@ -350,7 +356,7 @@ class Leadform extends React.Component {
                               Street Address
             </label>
                             <input className="control-input col-sm-6" type="Text" name="prospect_street_address"
-                              value={this.state.prospect_street_address} onChange={this.handelChange} width="50px">
+                              value={this.state.prospect_street_address} onChange={this.handleChange} width="50px">
                             </input>
 
                           </div>
@@ -365,7 +371,7 @@ class Leadform extends React.Component {
             </label>
                             <input className="control-input col-sm-6"
                               name="prospect_email"
-                              value={this.state.prospect_email} onChange={this.handelChange} width="50px">
+                              value={this.state.prospect_email} onChange={this.handleChange} width="50px">
                             </input>
 
                           </div>
@@ -376,7 +382,7 @@ class Leadform extends React.Component {
                               City
             </label>
                             <input className="control-input col-sm-6" name="prospect_city"
-                              value={this.state.prospect_city} onChange={this.handelChange}
+                              value={this.state.prospect_city} onChange={this.handleChange}
                               type="Text" width="50px">
                             </input>
 
@@ -393,7 +399,7 @@ class Leadform extends React.Component {
             </label>
                             <input className="control-input col-sm-6"
                               type="Text" name="prospect_company" cowidth="50px"
-                              value={this.state.prospect_company} onChange={this.handelChange}
+                              value={this.state.prospect_company} onChange={this.handleChange}
                             >
                             </input>
                           </div>
@@ -404,7 +410,7 @@ class Leadform extends React.Component {
                               State
             </label>
                             <input className="control-input col-sm-6" type="Text"
-                              value={this.state.prospect_state} onChange={this.handelChange}
+                              value={this.state.prospect_state} onChange={this.handleChange}
                               name="prospect_state" width="50px">
                             </input>
 
@@ -419,7 +425,7 @@ class Leadform extends React.Component {
                               Designation
             </label>
                             <input className="control-input col-sm-6" type="Text" name="prospect_designation"
-                              value={this.state.prospect_designation} onChange={this.handelChange} width="50px">
+                              value={this.state.prospect_designation} onChange={this.handleChange} width="50px">
                             </input>
                           </div>
                         </Col>
@@ -429,7 +435,7 @@ class Leadform extends React.Component {
                               Country
             </label>
                             <input className="control-input col-sm-6" type="Text"
-                              value={this.state.prospect_country} onChange={this.handelChange}
+                              value={this.state.prospect_country} onChange={this.handleChange}
                               name="prospect_country" width="50px">
                             </input>
 
@@ -443,7 +449,7 @@ class Leadform extends React.Component {
                               Skype Id
             </label>
                             <input className="control-input col-sm-6" type="Text"
-                              value={this.state.prospect_skype_id} onChange={this.handelChange}
+                              value={this.state.prospect_skype_id} onChange={this.handleChange}
                               name="prospect_skype_id" width="50px">
                             </input>
                           </div>
@@ -455,7 +461,7 @@ class Leadform extends React.Component {
             </label>
                             <input className="control-input col-sm-6" type="Text" width="50px"
                               name="prospect_phone"
-                              value={this.state.prospect_phone} onChange={this.handelChange}>
+                              value={this.state.prospect_phone} onChange={this.handleChange}>
                             </input>
 
 

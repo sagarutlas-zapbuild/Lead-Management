@@ -9,10 +9,19 @@ const PitchedModal = (props) => {
   const { lead_id, lead_title, prospect_id } = props
   const [modal, setModal] = useState(false);
   const [lead, setLead] = useState(rawLead);
+  const [attachments, setAttachments] = useState([{ attachment: "", attachment_id: "" }]);
+  const [comments, setComments] = useState([{ comment: "", comment_id: "" }]);
   const [prospect, setProspect] = useState(rawProspect);
   const toggle = () => {
     if (!modal) {
-      setData(setLead, setProspect, lead_id, prospect_id);
+      setData({
+        setLead: setLead,
+        setProspect: setProspect,
+        lead_id: lead_id,
+        prospect_id: prospect_id,
+        setAttachments: setAttachments,
+        setComments: setComments
+      });
       setModal(!modal)
     }
     else {
@@ -22,7 +31,7 @@ const PitchedModal = (props) => {
 
   return (
     <div>
-{console.log(prospect)}
+      {console.log(prospect)}
       <LeadLabel lead_title={lead_title} toggle={toggle} />
 
       <Modal className="modal-dailog modal-lg" isOpen={modal} toggle={toggle}>
@@ -37,7 +46,7 @@ const PitchedModal = (props) => {
 
                 <Description description={lead.lead_description} />
                 <Prospect prospect={prospect} />
-                <EditProspectModal update ={() => { setData(setLead, setProspect, lead_id, prospect_id); }} data = {prospect}/>
+                <EditProspectModal update={() => { setData(setLead, setProspect, lead_id, prospect_id); }} data={prospect} />
                 <br />
                 <br />
 
@@ -45,17 +54,23 @@ const PitchedModal = (props) => {
                   <label className="text-center"><b>Comments</b></label>
 
                 </div>
-                <textarea
-                  className="top"
+                <div className="Description">
+                  {comments.map(comment => {
+                    return (<label>
+                      {" " + comment.comment}
+                    </label>)
 
-                  id="description_new"
-                  rows="5" cols="51" required
-                /*  let value = this.state.data.map(e=>JSON.stringify(e).replace(/{|}/g,'')).join(',\n');
-<textarea value={value}  defaultValue="val" /> */
-                />
+                  })}
+                </div>
                 <br />
                 <div>
-                  <label className="text-center"><b>Attachement</b></label>
+                  <label className="text-center"><b>Attachement</b>
+                    {attachments.map(attachment => {
+                      return (<a href={"http://localhost:8000/get_file/" + attachment.attachment_id + "/"}>
+                        {" " + attachment.attachment}
+                      </a>)
+                    })}
+                  </label>
                 </div>
 
               </div>
@@ -70,7 +85,7 @@ const PitchedModal = (props) => {
                     <MoveTo toggle={toggle} refresh={props.refresh} lead_id={lead.lead_id}></MoveTo>
                     <br />
                     <label ><b>TAGS</b>
-        <div id="description_new">
+                      <div id="description_new">
                         {lead.lead_keyword_tags}
                       </div>
                       <EditModal lead_id={lead.lead_id}
@@ -86,7 +101,7 @@ const PitchedModal = (props) => {
                     </div></label>
                     <br />
                     <label><b>TECHNOLOGY</b>
-        <div id="description_new">
+                      <div id="description_new">
                         {lead.lead_technology}
                       </div>
                       <EditModal lead_id={lead.lead_id}
@@ -97,7 +112,7 @@ const PitchedModal = (props) => {
                     </label>
                     <br />
                     <label ><b>Created on</b>
-        <div
+                      <div
                         id="description_new">
                         {getDate(lead.lead_date)}
                       </div>

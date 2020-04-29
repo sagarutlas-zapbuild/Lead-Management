@@ -123,31 +123,64 @@ export const Header = (props) => {
         </small></>);
 }
 
-//Set Lead and Prospect Data in Modal
-export const setData = (setLead, setProspect, lead_id, prospect_id) => {
+//Set Lead and Prospect and attachments Data in Modal  setLead: false, setProspect: false, lead_id: false, prospect_id: false, setAttachments: false, setComments: false 
+export const setData = async (args = {}) => {
+    if (args.setLead) {
+        fetch("http://localhost:8000/leads/" + args.lead_id, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then(res => {
+                return res.json();
+            })
+            .then((data) => {
+                args.setLead(data);
+            });
+    }
 
-    fetch("http://localhost:8000/leads/" + lead_id, {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-    })
-        .then(res => {
-            return res.json();
+    if (args.setProspect) {
+        fetch("http://localhost:8000/prospects/" + args.prospect_id, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
         })
-        .then((data) => {
-            setLead(data);
-        });
-    fetch("http://localhost:8000/prospects/" + prospect_id, {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-    })
-        .then(res => {
-            return res.json();
+            .then(res => {
+                return res.json();
+            })
+            .then((data) => {
+                args.setProspect(data);
+            });
+    }
+
+    if (args.setAttachments) {
+        fetch("http://localhost:8000/lead_attachments/" + args.lead_id, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
         })
-        .then((data) => {
-            setProspect(data);
-        });
+            .then(res => {
+                return res.json();
+            })
+            .then((data) => {
+                args.setAttachments(data);
+            });
+    }
+
+    if (args.setComments) {
+        fetch("http://localhost:8000/lead_comments/" + args.lead_id, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then(res => {
+                return res.json();
+            })
+            .then((data) => {
+                args.setComments(data);
+            });
+    }
+
 }
 
 export const getDate = (date) => {

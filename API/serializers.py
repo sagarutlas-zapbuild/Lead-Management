@@ -21,7 +21,7 @@ class LeadSerializer(serializers.ModelSerializer):
         """ prospect_data = validated_data.pop('lead_prospect')
         prospect = Prospect.objects.create(**prospect_data) """
         """ lead_prospect=prospect, """
-        lead = Lead.objects.create( **validated_data)
+        lead = Lead.objects.create(**validated_data)
         """ attachment_data = validated_data.pop('lead_attachment')
         attachments = []
         for attachment_object in attachment_data:
@@ -30,18 +30,17 @@ class LeadSerializer(serializers.ModelSerializer):
 
 
 class AttachmentSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = Attachment
         fields = ('attachment_id', 'attachment', 'attachment_lead')
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    comment_lead = LeadSerializer()
-
     class Meta:
         model = Comment
         fields = ('comment', 'comment_id', 'comment_date', 'comment_lead')
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

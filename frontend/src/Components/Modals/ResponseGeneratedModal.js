@@ -10,9 +10,18 @@ const PitchedModal = (props) => {
   const [modal, setModal] = useState(false);
   const [lead, setLead] = useState(rawLead);
   const [prospect, setProspect] = useState(rawProspect);
+  const [comments, setComments] = useState([{ comment: "", comment_id: "" }]);
+  const [attachments, setAttachments] = useState([{ attachment: "", attachment_id: "" }]);
   const toggle = () => {
     if (!modal) {
-      setData(setLead, setProspect, lead_id, prospect_id);
+      setData({
+        setLead: setLead,
+        setProspect: setProspect,
+        lead_id: lead_id,
+        prospect_id: prospect_id,
+        setAttachments: setAttachments,
+        setComments: setComments
+      });
       setModal(!modal)
     }
     else {
@@ -45,17 +54,23 @@ const PitchedModal = (props) => {
                   <label className="text-center"><b>Comments</b></label>
 
                 </div>
-                <textarea
-                  className="top"
+                <div className="Description">
+                  {comments.map(comment => {
+                    return (<label>
+                      {" " + comment.comment}
+                    </label>)
 
-                  id="description_new"
-                  rows="5" cols="51" required
-                /*  let value = this.state.data.map(e=>JSON.stringify(e).replace(/{|}/g,'')).join(',\n');
-<textarea value={value}  defaultValue="val" /> */
-                />
+                  })}
+                </div>
                 <br />
                 <div>
-                  <label className="text-center"><b>Attachement</b></label>
+                  <label className="text-center"><b>Attachement</b>
+                    {attachments.map(attachment => {
+                      return (<a href={"http://localhost:8000/get_file/" + attachment.attachment_id + "/"}>
+                        {" " + attachment.attachment}
+                      </a>)
+                    })}
+                  </label>
                 </div>
 
               </div>

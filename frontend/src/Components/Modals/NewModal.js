@@ -17,16 +17,23 @@ import {
 
 const NewModal = (props) => {
 
-  const { lead_id, lead_title, prospect_id} = props
+  const { lead_id, lead_title, prospect_id } = props
 
   const [modal, setModal] = useState(false);
   const [nestedModal, setNestedModal] = useState(false);
   const [closeAll, setCloseAll] = useState(false);
   const [lead, setLead] = useState(rawLead);
+  const [attachments, setAttachments] = useState([{ attachment: "", attachment_id: "" }]);
   const [prospect, setProspect] = useState(rawProspect);
   const toggle = () => {
     if (!modal) {
-      setData(setLead, setProspect, lead_id, prospect_id);
+      setData({
+        setLead: setLead,
+        setProspect: setProspect,
+        lead_id: lead_id,
+        prospect_id: prospect_id,
+        setAttachments: setAttachments
+      });
     }
     setModal(!modal);
   }
@@ -56,13 +63,18 @@ const NewModal = (props) => {
 
                 <label >
                   <b>Attachements:</b>
+                  {attachments.map(attachment => {
+                    return (<a href={"http://localhost:8000/get_file/" + attachment.attachment_id + "/"}>
+                      {" " + attachment.attachment}
+                    </a>)
+                  })}
                 </label>
-                
+
               </div>
               <div className="col-sm-4">
                 <div id="margin1">
                   <div className="sidenav">
-                      <b><label><font size="3" > NEW</font> </label></b>
+                    <b><label><font size="3" > NEW</font> </label></b>
                     <br />
                     <label >TAGS
                     <div
